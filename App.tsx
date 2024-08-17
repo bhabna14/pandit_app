@@ -20,6 +20,7 @@ import Podcast from './src/Screens/Podcast/Index'
 import Panji from './src/Screens/Panji/Index'
 import BookingRequest from './src/Screens/BookingRequest/Index'
 import AllBooking from './src/Screens/AllBooking/Index'
+import PoojaPending from './src/Screens/PoojaPending/Index'
 import BookingDetails from './src/Screens/BookingDetails/Index'
 import AddPujaDetails from './src/Screens/AddPujaDetails/Index'
 import EditPujaDetails from './src/Screens/EditPujaDetails/Index'
@@ -37,7 +38,7 @@ import PrivacyPolicy from './src/Screens/PrivacyPolicy/Index'
 
 const Stack = createNativeStackNavigator()
 
-export const base_url = "http://panditapp.mandirparikrama.com/"
+export const base_url = "https://panditapp.mandirparikrama.com/"
 // export const base_url = "https://pandit.33crores.com/"
 
 const App = () => {
@@ -97,6 +98,7 @@ const App = () => {
           <Stack.Screen name="Podcast" component={Podcast} />
           <Stack.Screen name="Panji" component={Panji} />
           <Stack.Screen name="AllBooking" component={AllBooking} />
+          <Stack.Screen name="PoojaPending" component={PoojaPending} />
           <Stack.Screen name="BookingDetails" component={BookingDetails} />
           <Stack.Screen name="BookingRequest" component={BookingRequest} />
           <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
@@ -125,6 +127,7 @@ const App = () => {
             <Stack.Screen name="Podcast" component={Podcast} />
             <Stack.Screen name="Panji" component={Panji} />
             <Stack.Screen name="AllBooking" component={AllBooking} />
+            <Stack.Screen name="PoojaPending" component={PoojaPending} />
             <Stack.Screen name="BookingDetails" component={BookingDetails} />
             <Stack.Screen name="BookingRequest" component={BookingRequest} />
             <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
@@ -153,6 +156,7 @@ const App = () => {
           //     <Stack.Screen name="Podcast" component={Podcast} />
           //     <Stack.Screen name="Panji" component={Panji} />
           //     <Stack.Screen name="AllBooking" component={AllBooking} />
+          //     <Stack.Screen name="PoojaPending" component={PoojaPending} />
           //     <Stack.Screen name="BookingDetails" component={BookingDetails} />
           //     <Stack.Screen name="BookingRequest" component={BookingRequest} />
           //     <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
@@ -180,6 +184,7 @@ const App = () => {
             <Stack.Screen name="Podcast" component={Podcast} />
             <Stack.Screen name="Panji" component={Panji} />
             <Stack.Screen name="AllBooking" component={AllBooking} />
+            <Stack.Screen name="PoojaPending" component={PoojaPending} />
             <Stack.Screen name="BookingDetails" component={BookingDetails} />
             <Stack.Screen name="BookingRequest" component={BookingRequest} />
             <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />

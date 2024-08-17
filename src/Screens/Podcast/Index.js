@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Image, TouchableOpacity, TouchableHighlight, Text, StyleSheet, FlatList, ImageBackground, ScrollView, ActivityIndicator, RefreshControl, LogBox } from 'react-native';
 import TrackPlayer, { State, usePlaybackState, useProgress, Capability, Event } from 'react-native-track-player';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Slider from '@react-native-community/slider';
 import FastImage from 'react-native-fast-image';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -24,6 +25,61 @@ const Index = (props) => {
   const [currentMusic, setCurrentMusic] = useState(null);
   const playbackState = usePlaybackState();
   const progress = useProgress();
+  const [poojaReqst, setPoojaReqst] = useState([]);
+
+  const getPoojaRequest = async () => {
+    const token = await AsyncStorage.getItem('storeAccesstoken');
+    try {
+      const response = await fetch(base_url + 'api/all-pooja-list', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        // console.log("responseData", responseData.data.request_pooja);
+        setPoojaReqst(responseData.data.request_pooja);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const [allBooking, setAllBooking] = useState([]);
+
+  const getAllPendingPooja = async () => {
+    const token = await AsyncStorage.getItem('storeAccesstoken');
+    try {
+      setSpinner(true);
+      const response = await fetch(base_url + 'api/approved-pooja', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        setSpinner(false);
+        // console.log("responseData", responseData.data.today_pooja);
+        const pendingPooja = responseData.data.approved_pooja.filter(item =>
+          item.status === 'paid' &&
+          item.application_status === 'approved' &&
+          item.payment_status === 'paid' &&
+          item.pooja_status === 'pending'
+        );
+
+        setAllBooking(pendingPooja);
+      }
+    } catch (error) {
+      setSpinner(false);
+      console.log(error);
+    }
+  }
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -36,6 +92,8 @@ const Index = (props) => {
 
   useEffect(() => {
     getAllPodcast();
+    getPoojaRequest();
+    getAllPendingPooja();
     const setup = async () => {
       try {
         await TrackPlayer.setupPlayer();
@@ -274,17 +332,22 @@ const Index = (props) => {
       <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
           <View style={{ padding: 0, width: '20%' }}>
-            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('Home')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <View activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
-                <Octicons name="home" color={'#000'} size={21} />
-                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
+                <Octicons name="home" color={'#dc3545'} size={21} />
+                <Text style={{ color: '#dc3545', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
               </View>
-            </TouchableHighlight>
+            </View>
           </View>
           <View style={{ padding: 0, width: '19%' }}>
             <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('BookingRequest')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <AntDesign name="filetext1" color={'#000'} size={22} />
+                {poojaReqst.length > 0 &&
+                  <View style={styles.buble}>
+                    <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>{poojaReqst.length}</Text>
+                  </View>
+                }
                 <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Request</Text>
               </View>
             </TouchableHighlight>
@@ -297,9 +360,14 @@ const Index = (props) => {
             </View>
           </View>
           <View style={{ padding: 0, width: '19%' }}>
-            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('AllBooking')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('PoojaPending')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <MaterialIcons name="live-tv" color={'#000'} size={22} />
+                {allBooking.length > 0 &&
+                  <View style={styles.buble}>
+                    <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>{allBooking.length}</Text>
+                  </View>
+                }
                 <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Booking</Text>
               </View>
             </TouchableHighlight>
@@ -426,4 +494,15 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#000'
   },
+  buble: {
+    backgroundColor: '#f44336',
+    borderRadius: 100,
+    width: 18,
+    height: 18,
+    position: 'absolute',
+    left: 5,
+    top: -3,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });

@@ -231,10 +231,44 @@ const Index = (props) => {
     }
   }
 
+  const [allBooking, setAllBooking] = useState([]);
+
+  const getAllPendingPooja = async () => {
+    const token = await AsyncStorage.getItem('storeAccesstoken');
+    try {
+      setSpinner(true);
+      const response = await fetch(base_url + 'api/approved-pooja', {
+        method: 'GET',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+      });
+      const responseData = await response.json();
+      if (response.ok) {
+        setSpinner(false);
+        // console.log("responseData", responseData.data.today_pooja);
+        const pendingPooja = responseData.data.approved_pooja.filter(item =>
+          item.status === 'paid' &&
+          item.application_status === 'approved' &&
+          item.payment_status === 'paid' &&
+          item.pooja_status === 'pending'
+        );
+
+        setAllBooking(pendingPooja);
+      }
+    } catch (error) {
+      setSpinner(false);
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     if (isFocused) {
       getHomePageData();
       getProfile();
+      getAllPendingPooja();
     }
   }, [isFocused])
 
@@ -476,14 +510,14 @@ const Index = (props) => {
             </View>
           </View>
           <View style={{ padding: 0, width: '19%' }}>
-            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('AllBooking')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('PoojaPending')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <MaterialIcons name="live-tv" color={'#000'} size={22} />
-                {/* {todatPoojas.length > 0 &&
+                {allBooking.length > 0 &&
                   <View style={styles.buble}>
-                    <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>{todatPoojas.length}</Text>
+                    <Text style={{ color: '#fff', fontSize: 12, fontWeight: 'bold' }}>{allBooking.length}</Text>
                   </View>
-                } */}
+                }
                 <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Booking</Text>
               </View>
             </TouchableHighlight>
