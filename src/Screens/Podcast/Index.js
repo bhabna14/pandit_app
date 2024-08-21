@@ -334,8 +334,8 @@ const Index = (props) => {
           <View style={{ padding: 0, width: '20%' }}>
             <View activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
-                <Octicons name="home" color={'#dc3545'} size={21} />
-                <Text style={{ color: '#dc3545', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
+                <Octicons name="home" color={'#000'} size={21} />
+                <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
               </View>
             </View>
           </View>

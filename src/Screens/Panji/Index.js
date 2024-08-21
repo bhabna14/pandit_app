@@ -8,6 +8,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { base_url } from '../../../App';
 
 const Index = (props) => {
+
     const navigation = useNavigation();
     const [selectedDate, setSelectedDate] = useState(moment().format('YYYY-MM-DD'));
     const [poojaBooking, setPoojaBooking] = useState([]);
