@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "696430656576",
+    "project_id": "pandit-cd507",
+    "storage_bucket": "pandit-cd507.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:696430656576:android:c9e3abd321023a64be33a5",
+        "android_client_info": {
+          "package_name": "com.thirtythreecrorespandit"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdnUspvfRl_nxo2SBI7qwjg6_g4Z3jlDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

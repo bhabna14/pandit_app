@@ -1,8 +1,9 @@
-import { StyleSheet, StatusBar } from 'react-native'
+import { StyleSheet, StatusBar, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import messaging from '@react-native-firebase/messaging';
 
 // SplashScreen
 import SplashScreen from './src/Screens/SplashScreen/Index'
@@ -75,6 +76,11 @@ const App = () => {
       console.error('Failed to retrieve access token:', error);
     }
   };
+
+  messaging().setBackgroundMessageHandler(async remoteMessage => {
+    console.log('Message handled in the background!', remoteMessage);
+    // Handle background message here
+});
 
   useEffect(() => {
     getAccessToken();

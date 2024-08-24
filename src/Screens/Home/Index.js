@@ -13,6 +13,7 @@ import { RadioButton } from 'react-native-paper';
 import DrawerModal from '../../Component/DrawerModal';
 import { base_url } from '../../../App';
 import moment from 'moment';
+import Notification from '../../Component/Notification';
 
 const Index = (props) => {
 
@@ -309,6 +310,7 @@ const Index = (props) => {
 
   return (
     <SafeAreaView style={{ flex: 1, flexDirection: 'column' }}>
+      <Notification getHomePageData={getHomePageData} />
       <DrawerModal visible={isModalVisible} navigation={navigation} onClose={closeModal} />
       <View style={{ width: '100%', alignItems: 'center', paddingVertical: 10, backgroundColor: '#fff', shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 5 }}>
         <View style={{ width: '90%', alignSelf: 'center', alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' }}>

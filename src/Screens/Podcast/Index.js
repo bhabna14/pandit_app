@@ -217,53 +217,52 @@ const Index = (props) => {
         </View>
         :
         <View style={{ flex: 1 }} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}>
-          <View style={{ width: '100%', borderBottomEndRadius: 20, borderBottomLeftRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 13, elevation: 5 }}>
-            <ImageBackground source={require('../../assets/images/bg6.jpg')} style={{ width: '100%' }}>
-              <View>
+          <View style={{ width: '100%', borderBottomEndRadius: 20, borderBottomLeftRadius: 20, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.8, shadowRadius: 5, elevation: 2 }}>
+            <View style={{ width: '98%', alignSelf: 'center', flexDirection: 'row', alignItems: 'center', paddingBottom: 5 }}>
+              <View style={{ width: '25%' }}>
                 {latestPodcast?.image_url ?
                   <Image style={styles.mainImg} source={{ uri: latestPodcast?.image_url }} />
                   :
                   <Image style={styles.mainImg} source={require('../../assets/images/LordJagannath.jpg')} />
                 }
               </View>
-              <View style={{ marginTop: 10 }}>
-                <Text style={styles.title}>{latestPodcast?.name}</Text>
-                {/* <Text style={{ color: '#000', fontSize: 15, textAlign: 'center' }}>
-                  {latestPodcast?.description?.length > 40 ? `${latestPodcast.description.substring(0, 40)}...` : latestPodcast.description}
-                </Text> */}
-              </View>
-              <View style={{ width: '90%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 5 }}>
-                <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.position)}</Text>
-                <Slider
-                  style={styles.progessContainer}
-                  value={progress.position}
-                  minimumValue={0}
-                  maximumValue={progress.duration}
-                  thumbTintColor="red"
-                  minimumTrackTintColor="#e8979c"
-                  maximumTrackTintColor="#000"
-                  onSlidingComplete={async (value) => {
-                    await TrackPlayer.seekTo(value);
-                  }}
-                />
-                <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.duration)}</Text>
-              </View>
-              <View style={{ borderBottomEndRadius: 20, borderBottomLeftRadius: 20, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                <View style={styles.musicControls}>
-                  <TouchableOpacity onPress={handleBackward}>
-                    <AntDesign name="banckward" size={25} color="#c80100" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => togglePlayback(latestPodcast)}>
-                    <Ionicons name={playbackState.state === State.Playing ? 'pause-circle' : 'play-circle'} size={70} color="#c80100" />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={handleForward}>
-                    <AntDesign name="forward" size={25} color="#c80100" />
-                  </TouchableOpacity>
+              <View style={{ width: '75%' }}>
+                <View style={{ marginTop: 10 }}>
+                  <Text style={styles.title}>{latestPodcast?.name}</Text>
+                </View>
+                <View style={{ width: '90%', alignSelf: 'center', flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 5 }}>
+                  <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.position)}</Text>
+                  <Slider
+                    style={styles.progessContainer}
+                    value={progress.position}
+                    minimumValue={0}
+                    maximumValue={progress.duration}
+                    thumbTintColor="red"
+                    minimumTrackTintColor="#e8979c"
+                    maximumTrackTintColor="#000"
+                    onSlidingComplete={async (value) => {
+                      await TrackPlayer.seekTo(value);
+                    }}
+                  />
+                  <Text style={{ color: '#000', fontSize: 13 }}>{formatTime(progress.duration)}</Text>
+                </View>
+                <View style={{ borderBottomEndRadius: 20, borderBottomLeftRadius: 20, width: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                  <View style={styles.musicControls}>
+                    <TouchableOpacity onPress={handleBackward}>
+                      <AntDesign name="banckward" size={20} color="#c80100" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => togglePlayback(latestPodcast)}>
+                      <Ionicons name={playbackState.state === State.Playing ? 'pause-circle' : 'play-circle'} size={50} color="#c80100" />
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={handleForward}>
+                      <AntDesign name="forward" size={20} color="#c80100" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </View>
-            </ImageBackground>
+            </View>
           </View>
-          <View style={{ flex: 1, paddingTop: 1 }}>
+          <View style={{ flex: 1, marginTop: 6 }}>
             <FlatList
               showsVerticalScrollIndicator={false}
               // scrollEnabled={false}
@@ -332,12 +331,12 @@ const Index = (props) => {
       <View style={{ padding: 0, height: 58, borderRadius: 0, backgroundColor: '#fff', alignItems: 'center' }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%', margin: 0 }}>
           <View style={{ padding: 0, width: '20%' }}>
-            <View activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
+            <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('Home')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <Octicons name="home" color={'#000'} size={21} />
                 <Text style={{ color: '#000', fontSize: 11, fontWeight: '500', marginTop: 4, height: 17 }}>Home</Text>
               </View>
-            </View>
+            </TouchableHighlight>
           </View>
           <View style={{ padding: 0, width: '19%' }}>
             <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" onPress={() => props.navigation.navigate('BookingRequest')} style={{ backgroundColor: '#fff', padding: 10, flexDirection: 'column', alignItems: 'center' }}>
@@ -470,12 +469,11 @@ const styles = StyleSheet.create({
     borderRadius: 100
   },
   mainImg: {
-    width: '80%',
-    height: 170,
+    width: 90,
+    height: 90,
     alignSelf: 'center',
-    marginTop: 10,
-    borderRadius: 10,
-    resizeMode: 'cover'
+    // marginTop: 15,
+    borderRadius: 50
   },
   progessContainer: {
     width: '90%',

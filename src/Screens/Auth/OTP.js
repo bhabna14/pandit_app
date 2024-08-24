@@ -4,6 +4,8 @@ import { FloatingLabelInput } from 'react-native-floating-label-input';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { base_url } from '../../../App';
+import messaging from '@react-native-firebase/messaging';
+import DeviceInfo from 'react-native-device-info';
 
 const OTP = (props) => {
 
@@ -19,7 +21,39 @@ const OTP = (props) => {
         }
     }, [otp]);
 
+    // Request user permission for notifications
+    async function requestUserPermission() {
+        const authStatus = await messaging().requestPermission();
+        const enabled =
+            authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+            authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+
+        if (enabled) {
+            console.log('Authorization status:', authStatus);
+            getFCMToken();
+        }
+    }
+
+    const [fcmToken, setFcmToken] = useState(null);
+
+    // Get the FCM token for the device
+    async function getFCMToken() {
+        try {
+            const token = await messaging().getToken();
+            console.log('FCM Token:', token);
+            setFcmToken(token);
+        } catch (error) {
+            console.log('Error getting FCM token:', error);
+        }
+    }
+
+    useEffect(() => {
+        requestUserPermission();
+    }, [])
+
+
     const pressHandler = async () => {
+        let platformName = DeviceInfo.getSystemName();
         setIsLoading(true);
         try {
             if (otp === "" || otp.length != 6) {
@@ -36,6 +70,8 @@ const OTP = (props) => {
             formData.append('orderId', props.route.params.order_id);
             formData.append('otp', otp);
             formData.append('phoneNumber', props.route.params.phone);
+            formData.append('device_id', fcmToken);
+            formData.append('platform', platformName);
 
             const response = await fetch(base_url + "api/pandit-verify-otp", {
                 method: 'POST',
@@ -83,7 +119,7 @@ const OTP = (props) => {
                 console.log("Profile Status", responseData.message);
                 if (responseData.message === "No record found") {
                     navigation.replace('PersonalDetails');
-                } 
+                }
                 if (responseData.message === "Profile exists") {
                     // navigation.replace('Career');
                     navigation.replace('Home');
