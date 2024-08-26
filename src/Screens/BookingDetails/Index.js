@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView, Image } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
@@ -116,6 +116,7 @@ const BookingDetails = (props) => {
                         :
                         <DetailRow label="User Name" value={maskPhoneNumber(props?.route?.params?.user?.mobile_number)} />
                     }
+                    <DetailRow label="Booking ID" value={props?.route?.params?.booking_id} />
                     <DetailRow label="Pooja Name" value={props?.route?.params?.pooja?.pooja_name} />
                     <DetailRow label="User Mobile" value={maskPhoneNumber(props?.route?.params?.user?.mobile_number)} />
                     <DetailRow label="Pooja Fee" value={`₹${props?.route?.params?.pooja_fee}`} />
@@ -238,7 +239,7 @@ const styles = StyleSheet.create({
     detailValue: {
         width: '50%',
         color: '#555',
-        fontSize: 16,
+        fontSize: 15,
         textAlign: 'right',
     },
     sectionHeader: {
@@ -260,5 +261,9 @@ const styles = StyleSheet.create({
         height: 40,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    audioText: {
+        fontSize: 16,
+        color: '#007BFF',
     },
 });

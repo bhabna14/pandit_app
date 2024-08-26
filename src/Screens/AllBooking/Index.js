@@ -26,9 +26,10 @@ const Index = (props) => {
                 },
             });
             const responseData = await response.json();
+            console.log("responseData", response);
             if (response.ok) {
                 setSpinner(false);
-                // console.log("responseData", responseData.data.today_pooja);
+                console.log("responseData", responseData.data.today_pooja);
                 setAllBooking(responseData.data.approved_pooja);
             }
         } catch (error) {

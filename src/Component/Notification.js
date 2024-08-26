@@ -58,6 +58,7 @@ const Notification = ({ getHomePageData }) => {
                 'Notification caused app to open from background state:',
                 remoteMessage.notification,
             );
+            getHomePageData();
             // Handle the notification that opened the app
         });
 
@@ -70,6 +71,7 @@ const Notification = ({ getHomePageData }) => {
             .getInitialNotification()
             .then(remoteMessage => {
                 if (remoteMessage) {
+                    getHomePageData();
                     console.log(
                         'Notification caused app to open from quit state:',
                         remoteMessage.notification,
