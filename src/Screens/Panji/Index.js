@@ -80,6 +80,15 @@ const Index = (props) => {
         filterPoojaListByDate(poojaBooking, formattedDate);
     }
 
+    const maskPhoneNumber = (phoneNumber) => {
+        if (phoneNumber.length <= 4) {
+            return phoneNumber;
+        }
+        const visiblePart = phoneNumber.slice(0, 4);
+        const maskedPart = '*'.repeat(phoneNumber.length - 4);
+        return `${visiblePart}${maskedPart}`;
+    };
+
     useEffect(() => {
         getAllPoojaBooking();
     }, [])

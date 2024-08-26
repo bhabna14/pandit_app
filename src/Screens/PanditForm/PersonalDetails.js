@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ImageBackground, ActivityIndicator } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -13,9 +13,31 @@ const PersonalDetails = (props) => {
     const [isFocus, setIsFocus] = useState(false);
     const [title, setTitle] = useState('');
     const [titleValue, setTitleValue] = useState(null);
-    const [titleList, setTitleList] = useState([
-        { label: 'Pandit', value: 'Pandit' },
-    ]);
+    const [titleList, setTitleList] = useState([]);
+
+    const getPanditTitle = async () => {
+        try {
+            const response = await fetch(`${base_url}api/pandit-titles`, {
+                method: 'GET',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+            });
+            const responseData = await response.json();
+            if (response.ok) {
+                const formattedTitles = responseData.data.map(item => ({
+                    label: item.pandit_title,
+                    value: item.pandit_title,
+                }));
+                setTitleList(formattedTitles);
+                // console.log("getPanditTitle", formattedTitles);
+            }
+        } catch (error) {
+            console.log("Error when getting Pandit Title", error);
+        }
+    }
+
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
@@ -41,6 +63,8 @@ const PersonalDetails = (props) => {
         { label: 'Health Card', value: 'health_card' },
     ]);
     const [aboutPandit, setAboutPandit] = useState('');
+    const [panditGotra, setPanditGotra] = useState('');
+    const [panditBruti, setPanditBruti] = useState('');
     const [idImageSource, setIdImageSource] = useState(null);
     const [idProofPhoto, setIdProofPhoto] = useState('Select Your ID Proof');
     const selectIdProof = async () => {
@@ -215,6 +239,24 @@ const PersonalDetails = (props) => {
                 setIsLoading(false);
                 return;
             }
+            if (panditGotra === '') {
+                setErrorMessage('Please Enter Your Gotra.');
+                setShowError(true);
+                setTimeout(() => {
+                    setShowError(false);
+                }, 5000);
+                setIsLoading(false);
+                return;
+            }
+            if (panditBruti === '') {
+                setErrorMessage('Please Enter Your Bruti.');
+                setShowError(true);
+                setTimeout(() => {
+                    setShowError(false);
+                }, 5000);
+                setIsLoading(false);
+                return;
+            }
 
             const formData = new FormData();
             formData.append('title', titleValue);
@@ -238,6 +280,8 @@ const PersonalDetails = (props) => {
                 type: idImageSource.type
             });
             formData.append('about', aboutPandit);
+            formData.append('gotra', panditGotra);
+            formData.append('bruti', panditBruti);
 
             // console.log("formData", formData);
             // return;
@@ -275,6 +319,10 @@ const PersonalDetails = (props) => {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        getPanditTitle();
+    }, [])
 
     return (
         <ImageBackground source={require('../../assets/images/bg1.jpg')} style={styles.backgroundImage}>
@@ -439,6 +487,30 @@ const PersonalDetails = (props) => {
                                 onChangeText={setAboutPandit}
                                 value={aboutPandit}
                                 placeholder="Enter About Pandit"
+                                placeholderTextColor={'#b2b8b4'}
+                                keyboardType="default"
+                                underlineColorAndroid='transparent'
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Gotra</Text>
+                            <TextInput
+                                style={styles.inputs}
+                                onChangeText={setPanditGotra}
+                                value={panditGotra}
+                                placeholder="Enter Your Gotra"
+                                placeholderTextColor={'#b2b8b4'}
+                                keyboardType="default"
+                                underlineColorAndroid='transparent'
+                            />
+                        </View>
+                        <View style={styles.inputContainer}>
+                            <Text style={styles.label}>Bruti</Text>
+                            <TextInput
+                                style={styles.inputs}
+                                onChangeText={setPanditBruti}
+                                value={panditBruti}
+                                placeholder="Enter Your Bruti"
                                 placeholderTextColor={'#b2b8b4'}
                                 keyboardType="default"
                                 underlineColorAndroid='transparent'

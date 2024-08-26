@@ -3,10 +3,90 @@ import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity, ScrollView } fr
 import Feather from 'react-native-vector-icons/Feather';
 import { useNavigation } from '@react-navigation/native';
 import moment from 'moment';
+import { Rating } from 'react-native-ratings';
+import Sound from 'react-native-sound';
+import Slider from '@react-native-community/slider';
 
 const BookingDetails = (props) => {
 
     const navigation = useNavigation();
+    const [rating, setRating] = useState(props.route.params?.rating?.rating || 0);
+    const [sound, setSound] = useState(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+    const [currentPosition, setCurrentPosition] = useState(0);
+    const [duration, setDuration] = useState(0);
+
+    useEffect(() => {
+        return () => {
+            if (sound) {
+                sound.release(); // Release the sound object when the component is unmounted
+            }
+        };
+    }, [sound]);
+
+    const playAudio = (audioUrl) => {
+        if (audioUrl) {
+            const newSound = new Sound(audioUrl, null, (error) => {
+                if (error) {
+                    console.log('Failed to load the sound', error);
+                    return;
+                }
+                setDuration(newSound.getDuration()); // Set the audio duration
+                newSound.play((success) => {
+                    if (success) {
+                        console.log('Successfully finished playing');
+                        setIsPlaying(false);
+                        setCurrentPosition(0); // Reset position after finishing
+                    } else {
+                        console.log('Playback failed due to audio decoding errors');
+                        setIsPlaying(false);
+                    }
+                });
+            });
+            setSound(newSound);
+            setIsPlaying(true);
+        }
+    };
+
+    const stopAudio = () => {
+        if (sound) {
+            sound.stop(() => {
+                console.log('Audio stopped');
+                setIsPlaying(false);
+                setCurrentPosition(0);
+            });
+        }
+    };
+
+    const toggleAudio = () => {
+        if (isPlaying) {
+            stopAudio();
+        } else {
+            playAudio(props?.route?.params?.rating?.audio_file_url);
+        }
+    };
+
+    const updateCurrentPosition = () => {
+        if (sound) {
+            sound.getCurrentTime((seconds) => {
+                setCurrentPosition(seconds);
+            });
+        }
+    };
+
+    useEffect(() => {
+        if (isPlaying && sound) {
+            const interval = setInterval(updateCurrentPosition, 1000); // Update position every second
+            return () => clearInterval(interval);
+        }
+    }, [isPlaying, sound]);
+
+    const seekAudio = (value) => {
+        if (sound) {
+            sound.setCurrentTime(value);
+            setCurrentPosition(value);
+        }
+    };
 
     useEffect(() => {
         console.log("pooja details", props.route.params);
@@ -43,6 +123,51 @@ const BookingDetails = (props) => {
                     <DetailRow label="Date & Time" value={moment(props?.route?.params?.booking_date).format('Do MMMM YYYY h:mma')} />
                     <DetailRow label="Address" value={props?.route?.params?.address?.area + ", " + props?.route?.params?.address?.city + ", " + props?.route?.params?.address?.state + ", " + props?.route?.params?.address?.pincode} isLastItem={true} />
                 </View>
+                {props?.route?.params?.rating &&
+                    <View style={[styles.detailsTable, { marginTop: 20, padding: 10 }]}>
+                        <Text style={styles.sectionHeader}>Pooja Rating</Text>
+                        <Rating
+                            startingValue={rating}
+                            // showRating={true}
+                            readonly={true}
+                            onFinishRating={(value) => setRating(value)}
+                            style={{ width: 200, alignSelf: 'center', marginBottom: 10 }}
+                        />
+                        <Text style={styles.infoText}>Feedback:  {props?.route?.params?.rating?.feedback_message}</Text>
+                        <View style={{ width: '100%', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 10 }}>
+                            {props?.route?.params?.rating?.image_path_url &&
+                                <View style={{ width: '48%' }}>
+                                    <Text style={styles.infoText}>Image Review:</Text>
+                                    <Image source={{ uri: props?.route?.params?.rating?.image_path_url }} style={{ width: 100, height: 120 }} />
+                                </View>
+                            }
+                            {props?.route?.params?.rating?.audio_file_url &&
+                                <View style={{ width: '48%', alignItems: 'center' }}>
+                                    <Text style={styles.infoText}>Audio Review:</Text>
+                                    <TouchableOpacity
+                                        style={styles.audioContainer}
+                                        onPress={toggleAudio}
+                                    >
+                                        <Text style={styles.audioText}>{isPlaying ? 'Stop Audio' : 'Play Audio'}</Text>
+                                    </TouchableOpacity>
+                                    <Slider
+                                        style={{ width: '100%', height: 40 }}
+                                        minimumValue={0}
+                                        maximumValue={duration}
+                                        value={currentPosition}
+                                        onValueChange={seekAudio}
+                                        minimumTrackTintColor="#1FB28A"
+                                        maximumTrackTintColor="#9c9a9a"
+                                        thumbTintColor="#1FB28A"
+                                    />
+                                    <Text style={styles.durationText}>
+                                        {Math.floor(currentPosition)}s / {Math.floor(duration)}s
+                                    </Text>
+                                </View>
+                            }
+                        </View>
+                    </View>
+                }
             </ScrollView>
         </SafeAreaView>
     );
@@ -115,5 +240,25 @@ const styles = StyleSheet.create({
         color: '#555',
         fontSize: 16,
         textAlign: 'right',
+    },
+    sectionHeader: {
+        color: '#000',
+        fontSize: 16,
+        fontWeight: '600',
+        marginBottom: 10
+    },
+    infoText: {
+        color: '#000',
+        fontSize: 14,
+        fontWeight: '400',
+        marginBottom: 5
+    },
+    audioContainer: {
+        backgroundColor: '#f1f1f1',
+        borderRadius: 5,
+        width: 120,
+        height: 40,
+        alignItems: 'center',
+        justifyContent: 'center'
     },
 });
