@@ -353,7 +353,7 @@ const Index = (props) => {
           </View>
           <View style={{ padding: 0, width: '23%' }}>
             <View style={{ backgroundColor: '#fff', padding: 8, height: 90, flexDirection: 'column', alignItems: 'center', bottom: 25, borderRadius: 100 }}>
-              <TouchableHighlight onPress={() => navigation.navigate('Podcast')} activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#dc3545', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 60 }}>
+              <TouchableHighlight activeOpacity={0.6} underlayColor="#DDDDDD" style={{ backgroundColor: '#dc3545', height: '100%', width: '100%', alignItems: 'center', justifyContent: 'center', borderRadius: 60 }}>
                 <MaterialCommunityIcons style={{}} name="podcast" color={'#fff'} size={40} />
               </TouchableHighlight>
             </View>

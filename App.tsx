@@ -36,6 +36,7 @@ import AboutUs from './src/Screens/AboutUs/Index'
 import ContactUs from './src/Screens/ContactUs/Index'
 import TermsOfUse from './src/Screens/TermsOfUse/Index'
 import PrivacyPolicy from './src/Screens/PrivacyPolicy/Index'
+import Help from './src/Screens/Help/Index'
 
 const Stack = createNativeStackNavigator()
 
@@ -80,7 +81,7 @@ const App = () => {
   messaging().setBackgroundMessageHandler(async remoteMessage => {
     console.log('Message handled in the background!', remoteMessage);
     // Handle background message here
-});
+  });
 
   useEffect(() => {
     getAccessToken();
@@ -119,6 +120,7 @@ const App = () => {
           <Stack.Screen name="ContactUs" component={ContactUs} />
           <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
           <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+          <Stack.Screen name="Help" component={Help} />
         </Stack.Navigator>
         :
         prifileStatus === "No record found" ?
@@ -148,6 +150,7 @@ const App = () => {
             <Stack.Screen name="ContactUs" component={ContactUs} />
             <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+            <Stack.Screen name="Help" component={Help} />
           </Stack.Navigator>
           :
           // prifileStatus === "Profile exists" ?
@@ -177,6 +180,7 @@ const App = () => {
           //     <Stack.Screen name="ContactUs" component={ContactUs} />
           //     <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
           //     <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+          //     <Stack.Screen name="Help" component={Help} />
           //   </Stack.Navigator>
           //   :
           <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -205,6 +209,7 @@ const App = () => {
             <Stack.Screen name="ContactUs" component={ContactUs} />
             <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
             <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+            <Stack.Screen name="Help" component={Help} />
           </Stack.Navigator>
       }
     </NavigationContainer>
