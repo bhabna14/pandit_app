@@ -91,14 +91,14 @@ const HelpPage = () => {
                 </View>
 
                 {/* Help Video Section */}
-                <View style={styles.videoContainer}>
+                {/* <View style={styles.videoContainer}>
                     <Text style={styles.videoHeader}>Watch This Video for Detailed Assistance :</Text>
                     <YoutubePlayer
                         height={220}
                         play={false}
                         videoId={'JNExiUy2-RE'}
                     />
-                </View>
+                </View> */}
             </ScrollView>
         </SafeAreaView>
     );

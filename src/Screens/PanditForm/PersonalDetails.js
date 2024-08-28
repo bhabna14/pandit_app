@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, ImageB
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
+import CheckBox from '@react-native-community/checkbox';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import { base_url } from '../../../App';
@@ -128,6 +129,7 @@ const PersonalDetails = (props) => {
         { label: 'Kannada', value: 'Kannada' },
         { label: 'Nepali', value: 'Nepali' }
     ]);
+    const [isAgree, setIsAgree] = useState(false);
 
     const [errorMessage, setErrorMessage] = useState('');
     const [showError, setShowError] = useState(false);
@@ -282,6 +284,7 @@ const PersonalDetails = (props) => {
             formData.append('about', aboutPandit);
             formData.append('gotra', panditGotra);
             formData.append('bruti', panditBruti);
+            formData.append('agree', isAgree);
 
             // console.log("formData", formData);
             // return;
@@ -516,13 +519,29 @@ const PersonalDetails = (props) => {
                                 underlineColorAndroid='transparent'
                             />
                         </View>
+                        <TouchableOpacity style={styles.checkboxContainer} onPress={() => setIsAgree(!isAgree)}>
+                            <View style={styles.checkbox}>
+                                <CheckBox
+                                    value={isAgree}
+                                    onValueChange={setIsAgree}
+                                    tintColors={{ true: '#1E90FF', false: '#8E8E8E' }}
+                                    boxType="square"
+                                    style={styles.checkboxStyle}
+                                />
+                            </View>
+                            <Text style={{ color: '#666564', fontSize: 15, fontWeight: '600' }}>I agree with the <Text onPress={() => navigation.navigate('TermsOfUse')} style={{ color: '#2176ed', fontSize: 14, textDecorationLine: 'underline' }}>Terms and conditions.</Text></Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
                 {showError && <Text style={styles.errorText}>{errorMessage}</Text>}
                 {isLoading ? (
                     <ActivityIndicator size="large" color="#c80100" />
                 ) : (
-                    <TouchableOpacity onPress={pressHandlerNext} style={styles.nextBTN}>
+                    <TouchableOpacity
+                        onPress={isAgree ? pressHandlerNext : null}
+                        style={[styles.nextBTN, !isAgree && { backgroundColor: '#A9A9A9' }]}
+                        disabled={!isAgree}
+                    >
                         <Text style={styles.nextBtnText}>Submit</Text>
                     </TouchableOpacity>
                 )}
@@ -645,5 +664,22 @@ const styles = StyleSheet.create({
         fontSize: 15,
         fontWeight: '600',
         letterSpacing: 0.5
+    },
+    checkboxContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    checkbox: {
+        height: 24,
+        width: 24,
+        borderRadius: 5,
+        marginRight: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    checkboxStyle: {
+        height: '100%',
+        width: '100%',
     },
 });
