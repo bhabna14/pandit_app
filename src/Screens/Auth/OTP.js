@@ -51,9 +51,9 @@ const OTP = (props) => {
         requestUserPermission();
     }, [])
 
-
     const pressHandler = async () => {
         let platformName = DeviceInfo.getSystemName();
+        let deviceModel = DeviceInfo.getModel();
         setIsLoading(true);
         try {
             if (otp === "" || otp.length != 6) {
@@ -71,7 +71,11 @@ const OTP = (props) => {
             formData.append('otp', otp);
             formData.append('phoneNumber', props.route.params.phone);
             formData.append('device_id', fcmToken);
+            formData.append('device_model', deviceModel);
             formData.append('platform', platformName);
+
+            // console.log("formData", formData);
+            // return;
 
             const response = await fetch(base_url + "api/pandit-verify-otp", {
                 method: 'POST',
