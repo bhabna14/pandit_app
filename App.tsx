@@ -4,9 +4,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import messaging from '@react-native-firebase/messaging';
+import NetInfo from "@react-native-community/netinfo";
 
 // SplashScreen
 import SplashScreen from './src/Screens/SplashScreen/Index'
+
+// No Internet Page
+import NoInternet from './src/Screens/NoInternet/Index'
 
 // Auth
 // import SelectLanguage from './src/Screens/Auth/SelectLanguage'
@@ -48,6 +52,19 @@ const App = () => {
   const [showSplash, setShowSplash] = useState(true);
   const [access_token, setAccess_token] = useState('');
   const [prifileStatus, setPrifileStatus] = useState("No record found"); //No record found, Profile exists, Career exists
+  const [isConnected, setIsConnected] = useState(true);
+
+  useEffect(() => {
+    const unsubscribe = NetInfo.addEventListener(state => {
+      console.log("Connection type", state.type);
+      console.log("Is connected?", state.isConnected);
+      setIsConnected(state.isConnected ?? false);
+    });
+    return () => {
+      unsubscribe();
+      // setTimeout(unsubscribe, 5000);
+    }
+  }, []);
 
   const getAccessToken = async () => {
     try {
@@ -96,61 +113,73 @@ const App = () => {
       {!access_token ?
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {showSplash ? (<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ presentation: 'modal', animationTypeForReplace: 'push', animation: 'slide_from_right' }} />) : null}
-          <Stack.Screen name="Login" component={Login} />
-          <Stack.Screen name="OTP" component={OTP} />
-          <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
-          <Stack.Screen name="Career" component={Career} />
-          <Stack.Screen name="Home" component={Home} />
-          <Stack.Screen name="Profile" component={Profile} />
-          <Stack.Screen name="Podcast" component={Podcast} />
-          <Stack.Screen name="Panji" component={Panji} />
-          <Stack.Screen name="AllBooking" component={AllBooking} />
-          <Stack.Screen name="PoojaPending" component={PoojaPending} />
-          <Stack.Screen name="BookingDetails" component={BookingDetails} />
-          <Stack.Screen name="BookingRequest" component={BookingRequest} />
-          <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
-          <Stack.Screen name="EditPujaDetails" component={EditPujaDetails} />
-          <Stack.Screen name="AllPuja" component={AllPuja} />
-          <Stack.Screen name="AddPujaItem" component={AddPujaItem} />
-          <Stack.Screen name="Address" component={Address} />
-          <Stack.Screen name="AreaOfService" component={AreaOfService} />
-          <Stack.Screen name="BankDetails" component={BankDetails} />
-          <Stack.Screen name="OnBord" component={OnBord} />
-          <Stack.Screen name="AboutUs" component={AboutUs} />
-          <Stack.Screen name="ContactUs" component={ContactUs} />
-          <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
-          <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-          <Stack.Screen name="Help" component={Help} />
+          {!isConnected ? (
+            <Stack.Screen name="NoInternet" component={NoInternet} />
+          ) : (
+            <>
+              <Stack.Screen name="Login" component={Login} />
+              <Stack.Screen name="OTP" component={OTP} />
+              <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
+              <Stack.Screen name="Career" component={Career} />
+              <Stack.Screen name="Home" component={Home} />
+              <Stack.Screen name="Profile" component={Profile} />
+              <Stack.Screen name="Podcast" component={Podcast} />
+              <Stack.Screen name="Panji" component={Panji} />
+              <Stack.Screen name="AllBooking" component={AllBooking} />
+              <Stack.Screen name="PoojaPending" component={PoojaPending} />
+              <Stack.Screen name="BookingDetails" component={BookingDetails} />
+              <Stack.Screen name="BookingRequest" component={BookingRequest} />
+              <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
+              <Stack.Screen name="EditPujaDetails" component={EditPujaDetails} />
+              <Stack.Screen name="AllPuja" component={AllPuja} />
+              <Stack.Screen name="AddPujaItem" component={AddPujaItem} />
+              <Stack.Screen name="Address" component={Address} />
+              <Stack.Screen name="AreaOfService" component={AreaOfService} />
+              <Stack.Screen name="BankDetails" component={BankDetails} />
+              <Stack.Screen name="OnBord" component={OnBord} />
+              <Stack.Screen name="AboutUs" component={AboutUs} />
+              <Stack.Screen name="ContactUs" component={ContactUs} />
+              <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
+              <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+              <Stack.Screen name="Help" component={Help} />
+            </>
+          )}
         </Stack.Navigator>
         :
         prifileStatus === "No record found" ?
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {showSplash ? (<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ presentation: 'modal', animationTypeForReplace: 'push', animation: 'slide_from_right' }} />) : null}
-            <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="OTP" component={OTP} />
-            <Stack.Screen name="Career" component={Career} />
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="Podcast" component={Podcast} />
-            <Stack.Screen name="Panji" component={Panji} />
-            <Stack.Screen name="AllBooking" component={AllBooking} />
-            <Stack.Screen name="PoojaPending" component={PoojaPending} />
-            <Stack.Screen name="BookingDetails" component={BookingDetails} />
-            <Stack.Screen name="BookingRequest" component={BookingRequest} />
-            <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
-            <Stack.Screen name="EditPujaDetails" component={EditPujaDetails} />
-            <Stack.Screen name="AllPuja" component={AllPuja} />
-            <Stack.Screen name="AddPujaItem" component={AddPujaItem} />
-            <Stack.Screen name="Address" component={Address} />
-            <Stack.Screen name="AreaOfService" component={AreaOfService} />
-            <Stack.Screen name="BankDetails" component={BankDetails} />
-            <Stack.Screen name="OnBord" component={OnBord} />
-            <Stack.Screen name="AboutUs" component={AboutUs} />
-            <Stack.Screen name="ContactUs" component={ContactUs} />
-            <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
-            <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-            <Stack.Screen name="Help" component={Help} />
+            {!isConnected ? (
+              <Stack.Screen name="NoInternet" component={NoInternet} />
+            ) : (
+              <>
+                <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="OTP" component={OTP} />
+                <Stack.Screen name="Career" component={Career} />
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Podcast" component={Podcast} />
+                <Stack.Screen name="Panji" component={Panji} />
+                <Stack.Screen name="AllBooking" component={AllBooking} />
+                <Stack.Screen name="PoojaPending" component={PoojaPending} />
+                <Stack.Screen name="BookingDetails" component={BookingDetails} />
+                <Stack.Screen name="BookingRequest" component={BookingRequest} />
+                <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
+                <Stack.Screen name="EditPujaDetails" component={EditPujaDetails} />
+                <Stack.Screen name="AllPuja" component={AllPuja} />
+                <Stack.Screen name="AddPujaItem" component={AddPujaItem} />
+                <Stack.Screen name="Address" component={Address} />
+                <Stack.Screen name="AreaOfService" component={AreaOfService} />
+                <Stack.Screen name="BankDetails" component={BankDetails} />
+                <Stack.Screen name="OnBord" component={OnBord} />
+                <Stack.Screen name="AboutUs" component={AboutUs} />
+                <Stack.Screen name="ContactUs" component={ContactUs} />
+                <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
+                <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+                <Stack.Screen name="Help" component={Help} />
+              </>
+            )}
           </Stack.Navigator>
           :
           // prifileStatus === "Profile exists" ?
@@ -185,31 +214,37 @@ const App = () => {
           //   :
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             {showSplash ? (<Stack.Screen name="SplashScreen" component={SplashScreen} options={{ presentation: 'modal', animationTypeForReplace: 'push', animation: 'slide_from_right' }} />) : null}
-            <Stack.Screen name="Home" component={Home} />
-            <Stack.Screen name="Login" component={Login} />
-            <Stack.Screen name="OTP" component={OTP} />
-            <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
-            <Stack.Screen name="Career" component={Career} />
-            <Stack.Screen name="Profile" component={Profile} />
-            <Stack.Screen name="Podcast" component={Podcast} />
-            <Stack.Screen name="Panji" component={Panji} />
-            <Stack.Screen name="AllBooking" component={AllBooking} />
-            <Stack.Screen name="PoojaPending" component={PoojaPending} />
-            <Stack.Screen name="BookingDetails" component={BookingDetails} />
-            <Stack.Screen name="BookingRequest" component={BookingRequest} />
-            <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
-            <Stack.Screen name="EditPujaDetails" component={EditPujaDetails} />
-            <Stack.Screen name="AllPuja" component={AllPuja} />
-            <Stack.Screen name="AddPujaItem" component={AddPujaItem} />
-            <Stack.Screen name="Address" component={Address} />
-            <Stack.Screen name="AreaOfService" component={AreaOfService} />
-            <Stack.Screen name="BankDetails" component={BankDetails} />
-            <Stack.Screen name="OnBord" component={OnBord} />
-            <Stack.Screen name="AboutUs" component={AboutUs} />
-            <Stack.Screen name="ContactUs" component={ContactUs} />
-            <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
-            <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-            <Stack.Screen name="Help" component={Help} />
+            {!isConnected ? (
+              <Stack.Screen name="NoInternet" component={NoInternet} />
+            ) : (
+              <>
+                <Stack.Screen name="Home" component={Home} />
+                <Stack.Screen name="Login" component={Login} />
+                <Stack.Screen name="OTP" component={OTP} />
+                <Stack.Screen name="PersonalDetails" component={PersonalDetails} />
+                <Stack.Screen name="Career" component={Career} />
+                <Stack.Screen name="Profile" component={Profile} />
+                <Stack.Screen name="Podcast" component={Podcast} />
+                <Stack.Screen name="Panji" component={Panji} />
+                <Stack.Screen name="AllBooking" component={AllBooking} />
+                <Stack.Screen name="PoojaPending" component={PoojaPending} />
+                <Stack.Screen name="BookingDetails" component={BookingDetails} />
+                <Stack.Screen name="BookingRequest" component={BookingRequest} />
+                <Stack.Screen name="AddPujaDetails" component={AddPujaDetails} />
+                <Stack.Screen name="EditPujaDetails" component={EditPujaDetails} />
+                <Stack.Screen name="AllPuja" component={AllPuja} />
+                <Stack.Screen name="AddPujaItem" component={AddPujaItem} />
+                <Stack.Screen name="Address" component={Address} />
+                <Stack.Screen name="AreaOfService" component={AreaOfService} />
+                <Stack.Screen name="BankDetails" component={BankDetails} />
+                <Stack.Screen name="OnBord" component={OnBord} />
+                <Stack.Screen name="AboutUs" component={AboutUs} />
+                <Stack.Screen name="ContactUs" component={ContactUs} />
+                <Stack.Screen name="TermsOfUse" component={TermsOfUse} />
+                <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
+                <Stack.Screen name="Help" component={Help} />
+              </>
+            )}
           </Stack.Navigator>
       }
     </NavigationContainer>
