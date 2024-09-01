@@ -96,7 +96,7 @@ const Index = (props) => {
         try {
 
             const formData = new FormData();
-            formData.append('cancel_reason', selectedReason);
+            formData.append('pandit_cancel_reason', selectedReason);
 
             const response = await fetch(`${base_url}api/bookings/${rejectedId}/reject`, {
                 method: 'POST',
