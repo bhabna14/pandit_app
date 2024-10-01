@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DropDownPicker from 'react-native-dropdown-picker';
 import CheckBox from '@react-native-community/checkbox';
 import { launchImageLibrary } from 'react-native-image-picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
 import Fontisto from 'react-native-vector-icons/Fontisto';
 import { base_url } from '../../../App';
 
@@ -95,29 +96,53 @@ const PersonalDetails = (props) => {
     const [imageSource, setImageSource] = useState(null);
     const [profilePhoto, setProfilePhoto] = useState('Select Profile Picture');
 
-    const selectProfilePhoto = async () => {
-        // var access_token = await AsyncStorage.getItem('storeAccesstoken');
-        const options = {
-            title: 'Select Image',
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
+    // const selectProfilePhoto = async () => {
+    //     // var access_token = await AsyncStorage.getItem('storeAccesstoken');
+    //     const options = {
+    //         title: 'Select Image',
+    //         storageOptions: {
+    //             skipBackup: true,
+    //             path: 'images',
+    //         },
+    //     };
 
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else {
-                const source = response.assets[0]
-                setImageSource(source);
-                setProfilePhoto(response.assets[0].fileName);
-                // console.log("selected image-=-=", response.assets[0])
-            }
-        });
+    //     launchImageLibrary(options, (response) => {
+    //         if (response.didCancel) {
+    //             console.log('User cancelled image picker');
+    //         } else if (response.error) {
+    //             console.log('ImagePicker Error: ', response.error);
+    //         } else {
+    //             const source = response.assets[0];
+    //             console.log("source", source);
+    //             setImageSource(source);
+    //             setProfilePhoto(response.assets[0].fileName);
+    //             // console.log("selected image-=-=", response.assets[0])
+    //         }
+    //     });
+    // };
+
+    const selectProfilePhoto = async () => {
+        try {
+            const image = await ImageCropPicker.openPicker({
+                width: 300,
+                height: 300,
+                cropping: true,  // Enables cropping
+                cropperCircleOverlay: false,  // Set to false for square crop
+                mediaType: 'photo',  // To allow only photo selection
+                includeBase64: true,
+            });
+
+            const fileName = (image.path).substring((image.path).lastIndexOf('/') + 1);
+
+            console.log("image", image.path,"," + fileName,"," + image.mime);
+            setImageSource(image);
+            setProfilePhoto(image.path || 'Profile Photo');
+            // You can also handle the base64 image using image.data if needed
+        } catch (error) {
+            console.log('Image selection error: ', error);
+        }
     };
+
     const [checked, setChecked] = useState(null);
     const [language, setLanguage] = useState('');
     const [languageValue, setLanguageValue] = useState(null);
@@ -269,10 +294,10 @@ const PersonalDetails = (props) => {
             formData.append('marital', checked);
             formData.append('language', languageValue);
             formData.append('profile_photo', {
-                uri: imageSource.uri,
-                name: imageSource.fileName,
-                filename: imageSource.fileName,
-                type: imageSource.type
+                uri: imageSource.path,
+                name: (imageSource.path).substring((imageSource.path).lastIndexOf('/') + 1),
+                filename: (imageSource.path).substring((imageSource.path).lastIndexOf('/') + 1),
+                type: imageSource.mime
             });
             formData.append('id_type', idProofValue);
             formData.append('upload_id', {
@@ -286,7 +311,7 @@ const PersonalDetails = (props) => {
             formData.append('bruti', panditBruti);
             formData.append('agree', isAgree);
 
-            // console.log("formData", formData);
+            // console.log("formData", formData._parts[7]);
             // return;
 
             const response = await fetch(base_url + 'api/profile/save', {
@@ -304,7 +329,7 @@ const PersonalDetails = (props) => {
                 navigation.navigate('Home');
             } else {
                 // Handle error response
-                setErrorMessage(data.message || 'Failed to save profile details. Please try again1.');
+                setErrorMessage(data.message || 'Failed to save profile details. Please try again.');
                 setShowError(true);
                 setTimeout(() => {
                     setShowError(false);
@@ -312,7 +337,7 @@ const PersonalDetails = (props) => {
             }
         } catch (error) {
             // Handle error response
-            setErrorMessage('Failed to save profile details. Please try again2.');
+            setErrorMessage('Failed to save profile details. Please try again.');
             setShowError(true);
             console.log("Error", error);
             setTimeout(() => {

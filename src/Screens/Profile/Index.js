@@ -4,8 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native'
 import Feather from 'react-native-vector-icons/Feather';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import DropDownPicker from 'react-native-dropdown-picker';
-import { launchImageLibrary } from 'react-native-image-picker';
+import ImageCropPicker from 'react-native-image-crop-picker';
 import ProfileImgMenu from '../../Component/ProfileImgMenu'
 import ShowDP from '../../Component/ShowDP';
 import { base_url } from '../../../App';
@@ -150,51 +149,45 @@ const Index = (props) => {
 
     const selectImage = async () => {
         var access_token = await AsyncStorage.getItem('storeAccesstoken');
-        const options = {
-            title: 'Select Image',
-            storageOptions: {
-                skipBackup: true,
-                path: 'images',
-            },
-        };
 
-        launchImageLibrary(options, (response) => {
-            if (response.didCancel) {
-                console.log('User cancelled image picker');
-            } else if (response.error) {
-                console.log('ImagePicker Error: ', response.error);
-            } else {
-                const source = response.assets[0].uri
-                setImageSource(source);
-                // console.log("selected image-=-=", response.assets[0])
-
-                let imageBody = new FormData();
-                imageBody.append('profile_photo',
-                    {
-                        uri: response.assets[0].uri,
-                        name: response.assets[0].fileName,
-                        filename: response.assets[0].fileName,
-                        type: response.assets[0].type
-                    });
-
-                fetch(base_url + 'api/update-photo',
-                    {
-                        method: 'POST',
-                        headers: {
-                            "Content-Type": "multipart/form-data",
-                            'Authorization': `Bearer ${access_token}`
-                        },
-                        body: imageBody
-                    })
-                    .then((response) => response.json())
-                    .then(async (responseData) => {
-                        console.log("Profile-picture Update----", responseData);
-                    })
-                    .catch((error) => {
-                        console.error('There was a problem with the fetch operation:', error);
-                    });
-            }
+        const image = await ImageCropPicker.openPicker({
+            width: 300,
+            height: 300,
+            cropping: true,  // Enables cropping
+            cropperCircleOverlay: false,  // Set to false for square crop
+            mediaType: 'photo',  // To allow only photo selection
+            includeBase64: true,
         });
+
+        // console.log("image", image.path, "," + fileName, "," + image.mime);
+        setImageSource(image.path);
+        const fileName = (image.path).substring((image.path).lastIndexOf('/') + 1);
+
+        let imageBody = new FormData();
+        imageBody.append('profile_photo',
+            {
+                uri: image.path,
+                name: fileName,
+                filename: fileName,
+                type: image.mime
+            });
+
+        fetch(base_url + 'api/update-photo',
+            {
+                method: 'POST',
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    'Authorization': `Bearer ${access_token}`
+                },
+                body: imageBody
+            })
+            .then((response) => response.json())
+            .then(async (responseData) => {
+                console.log("Profile-picture Update----", responseData);
+            })
+            .catch((error) => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     };
 
     useEffect(() => {
